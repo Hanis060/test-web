@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Domovia – byty k prodeji a pronájmu (ukázkový web)</title>
+<style>
+*{box-sizing:border-box;margin:0}
+body{font-family:system-ui,sans-serif;color:#222;background:#f5f6f8}
+header{background:#fff;border-bottom:1px solid #e3e5e8;position:sticky;top:0;z-index:5}
+.bar{max-width:1100px;margin:auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:22px;color:#0b6e69}
+nav a{margin-left:20px;color:#444;text-decoration:none;font-size:15px}
+.hero{background:linear-gradient(135deg,#0b6e69,#12a39b);color:#fff;padding:60px 20px;text-align:center}
+.hero h1{font-size:36px;margin-bottom:10px}
+.wrap{max-width:1100px;margin:auto;padding:30px 20px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.filters select,.filters input{padding:10px;border:1px solid #ccd;border-radius:8px;font-size:15px;background:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
+.card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #0001;cursor:pointer;transition:.2s}
+.card:hover{transform:translateY(-3px)}
+.img{height:170px;display:flex;align-items:flex-end;padding:10px}
+.tag{background:#fff;color:#0b6e69;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px}
+.body{padding:16px}
+.body h3{font-size:17px;margin-bottom:4px}
+.body p{color:#666;font-size:14px}
+.price{margin-top:10px;font-weight:800;color:#0b6e69;font-size:18px}
+#modal{position:fixed;inset:0;background:#0008;display:none;align-items:center;justify-content:center;padding:20px}
+#modal.on{display:flex}
+.box{background:#fff;border-radius:14px;max-width:520px;width:100%;overflow:hidden}
+.box .img{height:220px}
+.box .body{padding:22px}
+.box button{margin-top:16px;padding:10px 18px;border:0;border-radius:8px;background:#0b6e69;color:#fff;font-size:15px;cursor:pointer}
+footer{text-align:center;padding:30px;color:#777;font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="bar"><div class="logo">Domovia</div><nav><a href="#">Byty</a><a href="#">Domy</a><a href="#">O nás</a><a href="#kontakt">Kontakt</a></nav></div></header>
+<section class="hero"><h1>Najděte svůj nový domov</h1><p>Ukázková nabídka bytů – fiktivní data</p></section>
+<main class="wrap">
+<div class="filters">
+<select id="type"><option value="">Prodej i pronájem</option><option>Prodej</option><option>Pronájem</option></select>
+<select id="disp"><option value="">Všechny dispozice</option><option>1+kk</option><option>2+kk</option><option>3+kk</option><option>4+kk</option></select>
+<input id="max" type="number" placeholder="Max. cena (Kč)">
+</div>
+<div class="grid" id="grid"></div>
+</main>
+<div id="modal"><div class="box" id="box"></div></div>
+<footer id="kontakt">© Domovia – ukázkový web, všechna data jsou smyšlená · info@example.com</footer>
+<script>
+const data=[
+["Světlý byt u parku","Praha 6","Prodej","2+kk",58,6490000,"#12a39b,#0b6e69"],
+["Moderní garsoniéra","Brno-střed","Pronájem","1+kk",28,15900,"#f6a04d,#e4572e"],
+["Rodinný byt s balkonem","Plzeň","Prodej","3+kk",82,5890000,"#6c8ef5,#3b5bdb"],
+["Podkrovní byt v centru","Olomouc","Pronájem","2+kk",54,19500,"#b07cf5,#7048e8"],
+["Prostorný byt 4+kk","Ostrava","Prodej","4+kk",110,4990000,"#4cc38a,#2b8a5a"],
+["Byt s terasou","Praha 5","Pronájem","3+kk",76,32000,"#f56c9a,#c2255c"]];
+const fmt=n=>n.toLocaleString("cs-CZ")+" Kč";
+function render(){
+ const t=type.value,d=disp.value,m=+max.value||Infinity;
+ grid.innerHTML=data.map((x,i)=>({x,i})).filter(({x})=>(!t||x[2]==t)&&(!d||x[3]==d)&&x[5]<=m)
+ .map(({x,i})=>`<div class="card" onclick="show(${i})"><div class="img" style="background:linear-gradient(135deg,${x[6]})"><span class="tag">${x[2]}</span></div><div class="body"><h3>${x[0]}</h3><p>${x[1]} · ${x[3]} · ${x[4]} m²</p><div class="price">${fmt(x[5])}${x[2]=="Pronájem"?" / měs.":""}</div></div></div>`).join("")||"<p>Nic nenalezeno.</p>";
+}
+function show(i){const x=data[i];box.innerHTML=`<div class="img" style="background:linear-gradient(135deg,${x[6]})"></div><div class="body"><h3>${x[0]}</h3><p>${x[1]} · ${x[3]} · ${x[4]} m²</p><div class="price">${fmt(x[5])}</div><p style="margin-top:12px">Ukázkový popis nemovitosti. Kontaktujte nás pro prohlídku.</p><button onclick="modal.classList.remove('on')">Zavřít</button></div>`;modal.classList.add("on")}
+modal.onclick=e=>{if(e.target==modal)modal.classList.remove("on")};
+[type,disp,max].forEach(e=>e.oninput=render);render();
+</script>
+</body>
+</html>
